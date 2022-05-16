@@ -45,24 +45,52 @@ body {
 .container .input {
     display: flex;
     flex: 1;
-    flex-direction: column;
-    justify-content: center;
     color: white;
     margin-top: 10px;
     margin-bottom: 10px;
-    min-width: 280px;
-    max-width: 280px;
-    gap: 5px;
-    align-items: center;
 }
 
-.container button{
+.container .input .left {
+    display: flex;
+    flex: 1;
+}
+
+.container .input .right {
+    display: flex;
+    flex: 1;
+}
+
+.container .input .left .column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: rgb(31, 31, 31);
+}
+.container .input .right .column {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(26, 26, 26);
+}
+
+.container button {
     border: 1px solid rgb(0, 0, 0);
-    min-width: 66px;
-    font-size: 20px;
+    font-size: 19px;
     background-color: rgb(53, 53, 53);
     color: white;
-    
+    box-shadow: 0 0 1px black;
+}
+
+.container .left button{
+    min-width: 66px;
+    min-height: 37px;
+    max-width: 66px;
+}
+
+.container .right button{
+    min-width: 66px;
+    min-height: 30px;
+    max-width: 66px;
+    max-height: 30px;
 }
 
 .container button:hover{
@@ -70,8 +98,5 @@ body {
 }
 
 .container button:active{
-    border: 1px white;
-    border-color: black;
-    background-color: rgb(85, 85, 85);
-    box-shadow: 0 0 2px white;
+    border: 0px solid black;
 }
