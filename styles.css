@@ -23,7 +23,7 @@ body {
 }
 
 
-.container .screen {
+.container .output {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,22 +75,38 @@ body {
 .container button {
     border: 1px solid rgb(0, 0, 0);
     font-size: 19px;
+    align-items: center;
     background-color: rgb(53, 53, 53);
     color: white;
     box-shadow: 0 0 1px black;
 }
 
+
+
 .container .left button{
+    display: flex;
+    flex: 1;
+    justify-content: center;
     min-width: 66px;
     min-height: 37px;
     max-width: 66px;
 }
 
 .container .right button{
+    display: flex;
+    flex: 1;
+    justify-content: center;
     min-width: 66px;
-    min-height: 30px;
     max-width: 66px;
-    max-height: 30px;
+    min-height: 15%;
+}
+
+#backspace {
+    min-height: 20%;
+}
+
+#equals {
+    min-height: 20%;
 }
 
 .container button:hover{
@@ -98,5 +114,5 @@ body {
 }
 
 .container button:active{
-    border: 0px solid black;
+    border: 1px solid rgb(116, 116, 116);
 }
