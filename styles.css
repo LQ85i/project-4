@@ -23,7 +23,7 @@ body {
 }
 
 
-.container .output {
+#output {
     display: flex;
     align-items: center;
     justify-content: center;
