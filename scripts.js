@@ -1,22 +1,25 @@
 let inputList = [];
 const operators = ["+","-","*","/"];
+let resultOnScreen = false;
+const maxOutputLength = 40;
+const decimalPrecision = 1000000;
 
 function add(n1,n2){
     const r = n1+n2;
-    return Math.round(r * 1000000000) / 1000000000;
+    return Math.round(r * decimalPrecision) / decimalPrecision;
 }
 function substract(n1,n2){
     const r = n1-n2;
-    return Math.round(r * 1000000000) / 1000000000;
+    return Math.round(r * decimalPrecision) / decimalPrecision;
 }
 function multiply(n1,n2){
     const r = n1*n2;
-    return Math.round(r * 1000000000) / 1000000000;
+    return Math.round(r * decimalPrecision) / decimalPrecision;
 }
 function divide(n1,n2){
     if(n2 == 0){return NaN};
     const r = n1/n2;
-    return Math.round(r * 1000000000) / 1000000000;
+    return Math.round(r * decimalPrecision) / decimalPrecision;
 }
 
 function operate(n1,n2,operator) {
@@ -37,54 +40,69 @@ function operate(n1,n2,operator) {
 function storeInput(input){
     let last = inputList[inputList.length-1];
     let secondToLast = null;
-    if(input.length>1){
+    if(inputList.length>1){
         secondToLast = inputList[inputList.length-2];
     }
-    if(inputList.length<40){
+    const outputLength = inputList.join("").toString().length;
+    if(outputLength<=maxOutputLength){
         if(!isNaN(input)){
+            if(resultOnScreen){
+                inputList = [];
+            }
             inputList.push(input);
+            resultOnScreen = false;
         }
         else if(input == "pi"){
             inputList.push("π");
+            resultOnScreen = false;
         }
-        else if(input == "add"){
+        else if(input == "+"){
+            console.log(secondToLast)
             if(operators.includes(last) && secondToLast != "(" && !operators.includes(secondToLast)){
                 inputList.pop();
                 inputList.push("+");
+                resultOnScreen = false;
             }
             else if(!isNaN(last) || last == ")" || last == "π"){
                 inputList.push('+');
+                resultOnScreen = false;
             }
+            
         }
-        else if(input == "substract"){
+        else if(input == "-"){
             if(last != "-" && last != "."){
                 inputList.push('-');
+                resultOnScreen = false;
             }
         }
-        else if(input == "multiply"){
+        else if(input == "*"){
             if(operators.includes(last) && secondToLast != "(" && !operators.includes(secondToLast)){
                 inputList.pop();
                 inputList.push("*");
+                resultOnScreen = false;
             }
             else if(!isNaN(last) || last == ")" || last == "π"){
                 inputList.push('*');
+                resultOnScreen = false;
             }
         }
-        else if(input == "divide"){
+        else if(input == "/"){
             if(operators.includes(last) && secondToLast != "(" && !operators.includes(secondToLast)){
                 inputList.pop();
                 inputList.push("/");
+                resultOnScreen = false;
             }
             else if(!isNaN(last) || last == ")" || last == "π"){
                 inputList.push('/');
+                resultOnScreen = false;
             }
         }
-        else if(input == "leftParentheses"){
+        else if(input == "("){
             if((last != "." && (isNaN(last) && last != "π")) || operators.includes(last)){
                 inputList.push('(');
             }
         }
-        else if(input == "rightParentheses"){
+        else if(input == ")"){
             let left = 0;
             let right = 0;
             for(let i = 0; i < inputList.length; i++){
@@ -100,7 +118,7 @@ function storeInput(input){
             }
         }
         
-        else if(input == "point"){
+        else if(input == "."){
             let allowPoint = true;
             for(let i = inputList.length - 1; i >= 0; i--){
                 const item = inputList[i];
@@ -109,9 +127,12 @@ function storeInput(input){
                     break;
                 }
                 else if(operators.includes(item)){
-                    allowPoint = true
+                    allowPoint = true;
                     break;
                 }
+            }
+            if(resultOnScreen){
+                allowPoint = false;
             }
             if(!isNaN(last) && allowPoint){
                 inputList.push('.');
@@ -120,11 +141,13 @@ function storeInput(input){
     }
     if(input == "clear"){
         inputList.length = 0;
+        resultOnScreen = false;
     }
     else if(input == "backspace"){
         inputList.pop();
+        resultOnScreen = false;
     }
-    else if(input == "equals" && inputList.length>0){
+    else if(input == "=" && inputList.length>0){
         while(operators.includes(last) || last == "." || last == "("){
             inputList.pop();
             last = inputList[inputList.length-1];
@@ -160,12 +183,12 @@ function storeInput(input){
             }
         }
         inputList = processInput(inputList);
+        resultOnScreen = true;
     }
     updateOutput();
 }
 
 function processInput(input){
-    console.log(input.join(""));
     let result = input;
     // compute parentheses here
     if(input.includes("(")){
@@ -185,14 +208,10 @@ function processInput(input){
                 }
                 let rightIndex = j-1;
                 const subInput = input.slice(leftIndex,rightIndex);
-    
-    
-                
                 const arrayEnd = result.slice(rightIndex+1);
                 result = result.slice(0, leftIndex-1);
                 result = result.concat(processInput(subInput));
                 result = result.concat(arrayEnd);
-                console.log("now it looks like: " + result);
                 i = j+1;
             }
         }
@@ -211,12 +230,6 @@ function processInput(input){
                 n1RightIndex = i-1;
                 n2LeftIndex = i+1;
                 operator = result[i];
-                //  -12       *       34
-                //       |operator|        
-                // | n1|
-                //                   |n2|
-                // 
-                // operate(n1,n2,operator)
                 for(let j = i-1; j >= 0;j--){
                     if(j==0){
                         n1LeftIndex = j;
@@ -225,7 +238,7 @@ function processInput(input){
                     else if(operators.includes(result[j])){
                         if(result[j] == "-"){
                             // if symbol before - is operator, include - to number
-                            if(isNan(result[j-1])){
+                            if(isNaN(result[j-1])){
                                 n1LeftIndex = j;
                                 break;
                             }
@@ -256,36 +269,19 @@ function processInput(input){
                         break;
                     }
                 }
-                console.log("n1 indexes: ",n1LeftIndex,n1RightIndex);
                 n1 = Number(result.slice(n1LeftIndex,n1RightIndex+1).join(""));
-                console.log("n1: "+n1);
-
-                console.log("n2 indexes: ",n2LeftIndex,n2RightIndex);
                 n2 = Number(result.slice(n2LeftIndex,n2RightIndex+1).join(""));
-                console.log("n2: "+n2);
-
                 subResult = operate(n1,n2,operator);
-                console.log("subResult: "+subResult);
-
                 const arrayEnd = result.slice(n2RightIndex+1);
-                console.log("part after result: "+arrayEnd);
-                
                 if(n1LeftIndex>1){
                     result = result.slice(0, n1LeftIndex);
                 }
                 else {
                     result = [];
                 }
-                console.log("part before result: "+result);
-
                 result = result.concat(subResult);
-                console.log("result with start: "+result);
-
                 result = result.concat(arrayEnd);
-                console.log("result with end: "+result);
-
                 i = n1LeftIndex;
-                console.log("new i index: ",i);
             }
         }
     }
@@ -303,12 +299,6 @@ function processInput(input){
                 n1RightIndex = i-1;
                 n2LeftIndex = i+1;
                 operator = result[i];
-                //  -12       +       34
-                //       |operator|        
-                // | n1|
-                //                   |n2|
-                // 
-                // operate(n1,n2,operator)
                 for(let j = i-1; j >= 0;j--){
                     if(j==0){
                         n1LeftIndex = j;
@@ -317,7 +307,7 @@ function processInput(input){
                     else if(operators.includes(result[j])){
                         if(result[j] == "-"){
                             // if symbol before - is operator, include - to number
-                            if(isNan(result[j-1])){
+                            if(isNaN(result[j-1])){
                                 n1LeftIndex = j;
                                 break;
                             }
@@ -342,65 +332,47 @@ function processInput(input){
                         break;
                     }
                 }
-
-                console.log("n1 indexes: ",n1LeftIndex,n1RightIndex);
                 n1 = Number(result.slice(n1LeftIndex,n1RightIndex+1).join(""));
-                console.log("n1: "+n1);
-
-                console.log("n2 indexes: ",n2LeftIndex,n2RightIndex);
                 n2 = Number(result.slice(n2LeftIndex,n2RightIndex+1).join(""));
-                console.log("n2: "+n2);
-
                 subResult = operate(n1,n2,operator);
-                console.log("subResult: "+subResult);
-
                 const arrayEnd = result.slice(n2RightIndex+1);
-                console.log("part after result: "+arrayEnd);
-                
                 if(n1LeftIndex>1){
                     result = result.slice(0, n1LeftIndex-1);
                 }
                 else {
                     result = [];
                 }
-                console.log("part before result: "+result);
-
                 result = result.concat(subResult);
-                console.log("result with start: "+result);
-
                 result = result.concat(arrayEnd);
-                console.log("result with end: "+result);
-
                 i = n1LeftIndex;
-                console.log("new i index: ",i);
             }
         }
     }
-    console.log("return result: ",result.join(""));
-    console.log("reduce depth");
     return result;
 }
-
 function updateOutput(){
-    if(inputList.length>=33){
+    const output = inputList.join("");
+    if(output.length>=maxOutputLength){
+        document.getElementById("output").style.fontSize = 8 + "px";
+    }
+    else if(output.length>=33){
         document.getElementById("output").style.fontSize = 10 + "px";
     }
-    else if(inputList.length>=28){
+    else if(output.length>=28){
         document.getElementById("output").style.fontSize = 12 + "px";
     }
-    else if(inputList.length>=23){
+    else if(output.length>=23){
         document.getElementById("output").style.fontSize = 15 + "px";
     }
-    else if(inputList.length>=18){
+    else if(output.length>=18){
         document.getElementById("output").style.fontSize = 17 + "px";
     }
-    else if(inputList.length<18){
+    else if(output.length<18){
         document.getElementById("output").style.fontSize = 22 + "px";
     }
-    document.getElementById("output").innerHTML = inputList.join("");
+    document.getElementById("output").innerHTML = output;
     
 }
-
 
 const buttonAdd = document.querySelector('#add');
 const buttonSubstract = document.querySelector('#substract');
@@ -426,10 +398,10 @@ const buttonClear = document.querySelector('#clear');
 const buttonLeftParentheses = document.querySelector('#leftParentheses');
 const buttonRightParentheses = document.querySelector('#rightParentheses');
 
-buttonAdd.addEventListener("click", function(){storeInput("add"); });
-buttonSubstract.addEventListener("click", function(){storeInput("substract"); });
-buttonMultiply.addEventListener("click", function(){storeInput("multiply"); });
-buttonDivide.addEventListener("click", function(){storeInput("divide"); });
+buttonAdd.addEventListener("click", function(){storeInput("+"); });
+buttonSubstract.addEventListener("click", function(){storeInput("-"); });
+buttonMultiply.addEventListener("click", function(){storeInput("*"); });
+buttonDivide.addEventListener("click", function(){storeInput("/"); });
 
 button0.addEventListener("click", function(){storeInput(0); });
 button1.addEventListener("click", function(){storeInput(1); });
@@ -443,9 +415,29 @@ button8.addEventListener("click", function(){storeInput(8); });
 button9.addEventListener("click", function(){storeInput(9); });
 buttonPi.addEventListener("click", function(){storeInput("pi"); });
 
-buttonPoint.addEventListener("click", function(){storeInput("point"); });
+document.addEventListener('keydown',(event) => {
+let name = event.key;
+let code = event.code;
+if(!isNaN(name)){
+    storeInput(name);
+}
+else if(operators.includes(name)){
+    storeInput(name);
+}
+else if(name == "Enter"){
+    storeInput("=");
+}
+else if(name == "Backspace"){
+    storeInput("backspace");
+}
+else if(name == ","){
+    storeInput(".");
+}
+}, false);
+
+buttonPoint.addEventListener("click", function(){storeInput("."); });
 buttonBackspace.addEventListener("click", function(){storeInput("backspace"); });
-buttonEquals.addEventListener("click", function(){storeInput("equals"); });
+buttonEquals.addEventListener("click", function(){storeInput("="); });
 buttonClear.addEventListener("click", function(){storeInput("clear"); });
-buttonLeftParentheses.addEventListener("click", function(){storeInput("leftParentheses"); });
-buttonRightParentheses.addEventListener("click", function(){storeInput("rightParentheses"); });
+buttonLeftParentheses.addEventListener("click", function(){storeInput("("); });
+buttonRightParentheses.addEventListener("click", function(){storeInput(")"); });
