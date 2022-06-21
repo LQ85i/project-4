@@ -44,12 +44,15 @@ function storeInput(input){
         if(!isNaN(input)){
             inputList.push(input);
         }
+        else if(input == "pi"){
+            inputList.push("π");
+        }
         else if(input == "add"){
             if(operators.includes(last) && secondToLast != "(" && !operators.includes(secondToLast)){
                 inputList.pop();
                 inputList.push("+");
             }
-            else if(!isNaN(last) || last == ")"){
+            else if(!isNaN(last) || last == ")" || last == "π"){
                 inputList.push('+');
             }
         }
@@ -63,7 +66,7 @@ function storeInput(input){
                 inputList.pop();
                 inputList.push("*");
             }
-            else if(!isNaN(last) || last == ")"){
+            else if(!isNaN(last) || last == ")" || last == "π"){
                 inputList.push('*');
             }
         }
@@ -72,12 +75,12 @@ function storeInput(input){
                 inputList.pop();
                 inputList.push("/");
             }
-            else if(!isNaN(last) || last == ")"){
+            else if(!isNaN(last) || last == ")" || last == "π"){
                 inputList.push('/');
             }
         }
         else if(input == "leftParentheses"){
-            if((last != "." && isNaN(last)) || operators.includes(last)){
+            if((last != "." && (isNaN(last) && last != "π")) || operators.includes(last)){
                 inputList.push('(');
             }
         }
@@ -139,6 +142,22 @@ function storeInput(input){
         while(right < left){
             inputList.push(')');
             right++;
+        }
+        for(let i = 0; i < inputList.length; i++){
+            if(inputList[i] == "π"){
+                inputList[i] = Math.PI;
+                if(i != 0){
+                    if(!isNaN(inputList[i-1])){
+                        inputList.splice(i,0,"*");
+                        continue;
+                    }
+                }
+                if(i != inputList.length-1){
+                    if(!isNaN(inputList[i+1])){
+                        inputList.splice(i+1,0,"*");
+                    }
+                }
+            }
         }
         inputList = processInput(inputList);
     }
@@ -398,6 +417,7 @@ const button6 = document.querySelector('#six');
 const button7 = document.querySelector('#seven');
 const button8 = document.querySelector('#eight');
 const button9 = document.querySelector('#nine');
+const buttonPi = document.querySelector('#pi');
 
 const buttonPoint = document.querySelector('#point');
 const buttonBackspace = document.querySelector('#backspace');
@@ -421,6 +441,7 @@ button6.addEventListener("click", function(){storeInput(6); });
 button7.addEventListener("click", function(){storeInput(7); });
 button8.addEventListener("click", function(){storeInput(8); });
 button9.addEventListener("click", function(){storeInput(9); });
+buttonPi.addEventListener("click", function(){storeInput("pi"); });
 
 buttonPoint.addEventListener("click", function(){storeInput("point"); });
 buttonBackspace.addEventListener("click", function(){storeInput("backspace"); });
