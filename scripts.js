@@ -445,6 +445,9 @@ else if(name == "Backspace"){
 else if(name == ","){
     storeInput(".");
 }
+else if(name == 'Delete'){
+    storeInput('clear');
+}
 }, false);
 
 buttonPoint.addEventListener("click", function(){storeInput("."); });
