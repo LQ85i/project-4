@@ -57,7 +57,6 @@ function storeInput(input){
             resultOnScreen = false;
         }
         else if(input == "+"){
-            console.log(secondToLast)
             if(operators.includes(last) && secondToLast != "(" && !operators.includes(secondToLast)){
                 inputList.pop();
                 inputList.push("+");
@@ -430,11 +429,18 @@ buttonPi.addEventListener("click", function(){storeInput("pi"); });
 document.addEventListener('keydown',(event) => {
 let name = event.key;
 let code = event.code;
+event = event || window.event;
 if(!isNaN(name)){
     storeInput(name);
 }
 else if(operators.includes(name)){
     storeInput(name);
+}
+else if(event.code == "Digit8" && event.shiftKey){
+    storeInput("(");
+}
+else if(event.code == "Digit9" && event.shiftKey){
+    storeInput(")");
 }
 else if(name == "Enter"){
     storeInput("=");
@@ -447,7 +453,7 @@ else if(name == ","){
 }
 else if(name == 'Delete'){
     storeInput('clear');
-}
+} 
 }, false);
 
 buttonPoint.addEventListener("click", function(){storeInput("."); });
