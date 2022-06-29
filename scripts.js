@@ -391,6 +391,18 @@ const button8 = document.querySelector('#eight');
 const button9 = document.querySelector('#nine');
 const buttonPi = document.querySelector('#pi');
 
+// Force Enter key to always submit 'Equals' button 
+const buttons = document.querySelectorAll('button');
+buttons.forEach(
+    function(item){
+        item.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter'){
+                e.preventDefault();
+            }
+        });
+    }
+)
+
 const buttonPoint = document.querySelector('#point');
 const buttonBackspace = document.querySelector('#backspace');
 const buttonEquals = document.querySelector('#equals');
