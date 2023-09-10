@@ -102,19 +102,24 @@ function storeInput(input){
             }
         }
         else if(input == ")"){
-            let left = 0;
-            let right = 0;
-            for(let i = 0; i < inputList.length; i++){
-                if(inputList[i] == "("){
-                    left++;
+            if(last == "(") {
+                inputList.pop();
+            } else {
+                let left = 0;
+                let right = 0;
+                for(let i = 0; i < inputList.length; i++){
+                    if(inputList[i] == "("){
+                        left++;
+                    }
+                    else if(inputList[i] == ")"){
+                        right++;
+                    }
                 }
-                else if(inputList[i] == ")"){
-                    right++;
+                if(left > right){
+                    inputList.push(')');
                 }
             }
-            if(left > right){
-                inputList.push(')');
-            }
+            
         }
         
         else if(input == "."){
